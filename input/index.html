@@ -187,6 +187,7 @@
     right: 0;
     top: 0;
     bottom: 0;
+    transition: opacity 0.2s ease;
   }
 
   #regular-version {
@@ -195,7 +196,7 @@
 
 
   
-  @media (min-width: 768px) {
+  @media (min-width: 480px) {
     #regular-version {
       display: flex;
     }
@@ -206,7 +207,7 @@
     }
   }
   
-  @media (max-width: 768px) {
+  @media (max-width: 480px) {
     #regular-version {
       flex-direction: column;
     }

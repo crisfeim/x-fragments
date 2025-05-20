@@ -54,7 +54,7 @@ function runGeneration() {
 }
 
 
-// Inject this from swift
+// @todo: Inject this from swift
 Object.defineProperty(Element.prototype, "onClick", {
   set(handler) {
     this.addEventListener("click", handler)
