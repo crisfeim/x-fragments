@@ -24,22 +24,9 @@ class ComponentCompiler {
 
     fileprivate func compileToString() throws -> String {
         var html = try String(contentsOfFile: "\(sourcePath)/index.html", encoding: .utf8)
-        html = try injectComponents(into: html)
 
-        var scriptBlock = extract(tag: "script", from: html) ?? ""
-        html = remove(tag: "script", from: html)
 
-        let stateJS = try String(contentsOfFile: "\(sourcePath)/store.js", encoding: .utf8)
-
-        scriptBlock = """
-        <script>
-        \(stateJS)
-        \(elementDeclarations.joined(separator: "\n"))
-        \(scriptBlock)
-        </script>
-        """
-
-        return "\(html)\n\(scriptBlock)"
+        return html
     }
 
     private func injectComponents(into html: String) throws -> String {
@@ -85,7 +72,7 @@ class ComponentCompiler {
 }
 
 let cwd = FileManager.default.currentDirectoryPath
-let inputPath = "\(cwd)/input"
+let inputPath = "\(cwd)/alpinejs"
 let outputPath = "\(cwd)/output"
 
 Server(port: 4000, requestHandler: { request in
