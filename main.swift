@@ -11,11 +11,10 @@ class ComponentCompiler {
       self.outputPath = outputPath
     }
 
-    private var collectedStyles: [String] = []
     private var elementDeclarations: [String] = []
 
-    func compileToFile(injectedScript: String = "") throws {
-      let html = try compileToString(injectedScript: injectedScript)
+    func compileToFile() throws {
+      let html = try compileToString()
       let fm = FileManager.default
         if !fm.fileExists(atPath: outputPath) {
           try fm.createDirectory(atPath: outputPath, withIntermediateDirectories: true)
@@ -25,41 +24,24 @@ class ComponentCompiler {
       try html.write(toFile: outputFile, atomically: true, encoding: .utf8)
     }
 
-    private func compileToString(injectedScript: String = "") throws -> String {
+    private func compileToString() throws -> String {
         var html = try String(contentsOfFile: "\(sourcePath)/index.html", encoding: .utf8)
         html = try injectComponents(into: html)
 
-        let ui = extract(tag: "ui", from: html)
-        let actions = extract(tag: "actions", from: html)
-
-        html = remove(tag: "ui", from: html)
-        html = remove(tag: "actions", from: html)
+        var scriptBlock = extract(tag: "script", from: html) ?? ""
+        html = remove(tag: "script", from: html)
 
         let stateJS = try String(contentsOfFile: "\(sourcePath)/store.js", encoding: .utf8)
 
-        let scriptBlock = """
+        scriptBlock = """
         <script>
         \(stateJS)
-
         \(elementDeclarations.joined(separator: "\n"))
-
-        \(actions ?? "")
-
-        subscribe(state => {
-        \(ui ?? "")
-        });
-
-        \(injectedScript)
+        \(scriptBlock)
         </script>
         """
 
-
-        if !collectedStyles.isEmpty {
-            let styleBlock = "<style>\n\(collectedStyles.joined(separator: "\n"))\n</style>"
-            html.append("\n\(styleBlock)")
-        }
-
-        return "\(scriptBlock)\n\(html)"
+        return "\(html)\n\(scriptBlock)"
     }
 
     private func injectComponents(into html: String) throws -> String {
@@ -75,11 +57,6 @@ class ComponentCompiler {
         let pattern = "<\(tag)[^>]*></\(tag)>"
         let componentPath = "\(sourcePath)/\(filename)"
         let componentHTML = try String(contentsOfFile: componentPath, encoding: .utf8)
-
-        if let styleBlock = extract(tag: "style", from: componentHTML) {
-          collectedStyles.append(styleBlock)
-        }
-
         let variableName = tag
           .split(separator: "-")
           .enumerated()
@@ -107,36 +84,6 @@ class ComponentCompiler {
         let pattern = "<\(tag)[^>]*>[\\s\\S]*?</\(tag)>"
         return html.replacingOccurrences(of: pattern, with: "", options: .regularExpression)
     }
-}
-
-// === Hot reload script ===
-
-let injectedReloadScript = """
-const socket = new WebSocket("ws://localhost:8080/reload");
-socket.onmessage = async msg => {
-  if (msg.data === "reload") {
-    const res = await fetch("/");
-    const html = await res.text();
-    const doc = document.createElement("html");
-    doc.innerHTML = html;
-    document.head.replaceWith(doc.querySelector("head"));
-    document.body.replaceWith(doc.querySelector("body"));
-  }
-};
-"""
-
-// === File Watcher ===
-
-func startWatching(path: String, onChange: @escaping () -> Void) {
-    let fd = open(path, O_EVTONLY)
-    let source = DispatchSource.makeFileSystemObjectSource(
-        fileDescriptor: fd,
-        eventMask: .write,
-        queue: DispatchQueue.global()
-    )
-    source.setEventHandler { onChange() }
-    source.setCancelHandler { close(fd) }
-    source.resume()
 }
 
 let cwd = FileManager.default.currentDirectoryPath
