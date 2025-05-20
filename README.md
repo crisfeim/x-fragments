@@ -11,7 +11,7 @@ Embedding interactive components in articles without npm, reactive libraries, or
 A **minimal declarative component system** powered by:
 
 - HTML files representing components
-- A single `state.js` file as the reactive store
+- A single `store.js` file as the reactive store
 - `<ui>` and `<actions>` blocks for logic and event binding
 - A Swift compiler that:
   - Injects components where used by tag

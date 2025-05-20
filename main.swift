@@ -5,7 +5,7 @@ import Foundation
 class ComponentCompiler {
     let sourcePath: String
     let outputPath: String
-    
+
     init(sourcePath: String, outputPath: String) {
       self.sourcePath = sourcePath
       self.outputPath = outputPath
@@ -13,14 +13,14 @@ class ComponentCompiler {
 
     private var collectedStyles: [String] = []
     private var elementDeclarations: [String] = []
-    
+
     func compileToFile(injectedScript: String = "") throws {
       let html = try compileToString(injectedScript: injectedScript)
       let fm = FileManager.default
         if !fm.fileExists(atPath: outputPath) {
           try fm.createDirectory(atPath: outputPath, withIntermediateDirectories: true)
         }
-      
+
       let outputFile = "\(outputPath)/index.html"
       try html.write(toFile: outputFile, atomically: true, encoding: .utf8)
     }
@@ -35,7 +35,7 @@ class ComponentCompiler {
         html = remove(tag: "ui", from: html)
         html = remove(tag: "actions", from: html)
 
-        let stateJS = try String(contentsOfFile: "\(sourcePath)/state.js", encoding: .utf8)
+        let stateJS = try String(contentsOfFile: "\(sourcePath)/store.js", encoding: .utf8)
 
         let scriptBlock = """
         <script>
@@ -66,33 +66,33 @@ class ComponentCompiler {
       let fileManager = FileManager.default
       let componentFiles = try fileManager.contentsOfDirectory(atPath: sourcePath)
         .filter { $0.hasSuffix(".html") && $0 != "index.html" }
-      
+
       var result = html
       elementDeclarations = [] // reset
-      
+
       for filename in componentFiles {
         let tag = filename.replacingOccurrences(of: ".html", with: "")
         let pattern = "<\(tag)[^>]*></\(tag)>"
         let componentPath = "\(sourcePath)/\(filename)"
         let componentHTML = try String(contentsOfFile: componentPath, encoding: .utf8)
-        
+
         if let styleBlock = extract(tag: "style", from: componentHTML) {
           collectedStyles.append(styleBlock)
         }
-        
+
         let variableName = tag
           .split(separator: "-")
           .enumerated()
           .map { i, part in i == 0 ? part.lowercased() : part.capitalized }
           .joined()
         elementDeclarations.append("const \(variableName) = document.querySelector(\"\(tag)\")")
-        
+
         result = result.replacingOccurrences(of: pattern, with: componentHTML, options: .regularExpression)
       }
-      
+
       return result
     }
-  
+
     private func extract(tag: String, from html: String) -> String? {
         let pattern = "<\(tag)[^>]*>([\\s\\S]*?)</\(tag)>"
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return nil }
