@@ -47,3 +47,11 @@ function runGeneration() {
     }
   }, 300)
 }
+
+
+// Inject this from swift
+Object.defineProperty(Element.prototype, "onClick", {
+  set(handler) {
+    this.addEventListener("click", handler)
+  }
+})

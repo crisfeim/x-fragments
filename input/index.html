@@ -156,9 +156,7 @@
 
 <script>
     const runButton = document.getElementById('run-button');
-    runButton.addEventListener('click', () => {
-        alert('clicked')
-    })
+    runButton.onClick = () => alert('clicked')
 
     const specs = document.querySelector("#specs")
     subscribe(state => {
