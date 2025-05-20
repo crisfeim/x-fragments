@@ -158,7 +158,7 @@
     const runButton = document.getElementById('run-button');
     runButton.onClick = () => alert('clicked')
 
-    const specs = document.querySelector("#specs")
+    const specs = document.getElementById('specs')
     subscribe(state => {
       specs.value = state.specification
     })
