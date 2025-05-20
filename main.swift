@@ -5,6 +5,7 @@ let inputPath = "\(cwd)/alpinejs"
 let outputPath = "\(cwd)/output"
 let contents = try! String(contentsOfFile: "\(inputPath)/index.html", encoding: .utf8)
 
+ParserTests.run()
 Server(port: 4000, requestHandler: { request in
 
   if request.path == "" {
