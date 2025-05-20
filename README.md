@@ -1,10 +1,10 @@
 # Fragments
 
-Small exploration of generating interactive components in vanilla HTML, JS and CSS.
+Small exploration of creating interactive components in vanilla HTML, JS and CSS.
 
 ## Motiviation
 
-Embedding interactive components in articles without npm, reactive libraries, or any heavy modern frontend stack.
+Generating and embedding interactive components in articles without *npm*, reactive libraries, or any heavy modern frontend stack.
 
 ## Design
 
@@ -12,13 +12,10 @@ A **minimal declarative component system** powered by:
 
 - HTML files representing components
 - A single `store.js` file as the reactive store
-- `<ui>` and `<actions>` blocks for logic and event binding
 - A Swift compiler that:
-  - Injects components where used by tag
   - Gathers all `<style>` blocks into one
-  - Extracts UI and event logic from `<script ui>` and `<script actions>`
+  - Extracts UI and event logic from `<script>`
   - Outputs a single `index.html` — fully static and standalone
-
 
 ## Example usage
 
@@ -45,4 +42,4 @@ In your `index.html` file:
   })
 </actions>
 
-Then run `swiftc main.swift`.
+Then run `swiftc main.swift` and import the output `output/index.html` into your article (with an iframe or an embedding system)
