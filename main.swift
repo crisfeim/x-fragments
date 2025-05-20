@@ -3,13 +3,15 @@ import Foundation
 let cwd = FileManager.default.currentDirectoryPath
 let inputPath = "\(cwd)/alpinejs"
 let outputPath = "\(cwd)/output"
+let contents = try! String(contentsOfFile: "\(inputPath)/index.html", encoding: .utf8)
 
 Server(port: 4000, requestHandler: { request in
+
   if request.path == "" {
-    let index = try! ComponentCompiler(
+    let index = try! Parser(
       sourcePath: inputPath,
     outputPath: outputPath
-    ).compileToString()
+    ).parse(contents)
     
     return Response(statusCode: 200, contentType: "text/html", body: .text(index))
   } else {
