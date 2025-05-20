@@ -53,14 +53,13 @@ class ComponentCompiler {
         </script>
         """
 
-        html.append("\n\(scriptBlock)")
 
         if !collectedStyles.isEmpty {
             let styleBlock = "<style>\n\(collectedStyles.joined(separator: "\n"))\n</style>"
             html.append("\n\(styleBlock)")
         }
 
-        return html
+        return "\(scriptBlock)\n\(html)"
     }
 
     private func injectComponents(into html: String) throws -> String {
