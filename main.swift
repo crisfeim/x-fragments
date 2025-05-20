@@ -88,7 +88,7 @@ let cwd = FileManager.default.currentDirectoryPath
 let inputPath = "\(cwd)/input"
 let outputPath = "\(cwd)/output"
 
-_ = Server(port: 4000, requestHandler: { request in
+Server(port: 4000, requestHandler: { request in
   if request.path == "" {
     let index = try! ComponentCompiler(
       sourcePath: inputPath,
