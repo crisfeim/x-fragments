@@ -85,13 +85,14 @@ class ComponentCompiler {
 }
 
 let cwd = FileManager.default.currentDirectoryPath
+let inputPath = "\(cwd)/input"
+let outputPath = "\(cwd)/output"
 
-
-Server(port: 4000, requestHandler: { request in
+_ = Server(port: 4000, requestHandler: { request in
   if request.path == "" {
     let index = try! ComponentCompiler(
-      sourcePath: "\(cwd)/input",
-    outputPath: "\(cwd)/output"
+      sourcePath: inputPath,
+    outputPath: outputPath
     ).compileToString()
     
     return Response(statusCode: 200, contentType: "text/html", body: .text(index))

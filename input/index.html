@@ -1,4 +1,4 @@
-  <hstack id="regular-version" class="container">
+<hstack id="regular-version" class="container">
     <vstack class="left">
       <hstack class="header">
         <spacer></spacer>
@@ -162,4 +162,7 @@
     subscribe(state => {
       specs.value = state.specification
     })
+  
+  document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+    ':35729/livereload.js?snipver=2"></' + 'script>')
 </script>
