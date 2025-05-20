@@ -22,7 +22,7 @@ class ComponentCompiler {
       try html.write(toFile: outputFile, atomically: true, encoding: .utf8)
     }
 
-    private func compileToString() throws -> String {
+    fileprivate func compileToString() throws -> String {
         var html = try String(contentsOfFile: "\(sourcePath)/index.html", encoding: .utf8)
         html = try injectComponents(into: html)
 
@@ -85,14 +85,16 @@ class ComponentCompiler {
 }
 
 let cwd = FileManager.default.currentDirectoryPath
-let _ = try! ComponentCompiler(
-  sourcePath: "\(cwd)/input",
-  outputPath: "\(cwd)/output"
-).compileToFile()
+
 
 Server(port: 4000, requestHandler: { request in
   if request.path == "" {
-    return Response(statusCode: 200, contentType: "text/html", body: .text("hello world"))
+    let index = try! ComponentCompiler(
+      sourcePath: "\(cwd)/input",
+    outputPath: "\(cwd)/output"
+    ).compileToString()
+    
+    return Response(statusCode: 200, contentType: "text/html", body: .text(index))
   } else {
     return Response(statusCode: 400, contentType: "text/html", body: .text("Not fund"))
   }
