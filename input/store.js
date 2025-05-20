@@ -35,17 +35,22 @@ function runGeneration() {
   let count = 0
   const interval = setInterval(() => {
     count++
-    setState({ currentIteration: count })
-
+    setState({
+      isRunning: true,
+      generatedCode: `Generated ${count}`,
+      status: "failure",
+      currentIteration: count
+    })
+    
     if (count >= 5) {
       clearInterval(interval)
       setState({
         isRunning: false,
-        generatedCode: "// Código generado automáticamente",
+        generatedCode: `Generated ${count}`,
         status: "success"
       })
     }
-  }, 300)
+  }, 600)
 }
 
 

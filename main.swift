@@ -60,7 +60,7 @@ class ComponentCompiler {
           .enumerated()
           .map { i, part in i == 0 ? part.lowercased() : part.capitalized }
           .joined()
-        elementDeclarations.append("const \(variableName) = document.querySelector(\"\(tag)\")")
+        // elementDeclarations.append("const \(variableName) = document.querySelector(\"\(tag)\")")
 
         result = result.replacingOccurrences(of: pattern, with: componentHTML, options: .regularExpression)
       }
