@@ -1,27 +1,53 @@
 import Foundation
+import RegexBuilder
 
 struct Parser {
-    let sourcePath: String
-    let outputPath: String
-
-    init(sourcePath: String, outputPath: String) {
-      self.sourcePath = sourcePath
-      self.outputPath = outputPath
+  func parse(_ string: String) -> String {
+    string
+  }
+  
+  func parseImports(_ string: String) -> [String] {
+    let importPattern = Regex {
+      "@import("
+      Capture {
+        OneOrMore {
+          NegativeLookahead { ")" }
+          CharacterClass.any
+        }
+      }
+      ")"
     }
-
-    func parse(_ string: String) throws -> String {
-        string
+    
+    let matches = string.matches(of: importPattern)
+    
+    let importedComponents = matches.map { match in
+      String(match.output.1)
     }
+    
+    return importedComponents
+  }
 }
 
 class ParserTests {
   static func run() {
     let instance = ParserTests()
-    instance.test_parse_parsesImportBlocks()
+    do {
+      try instance.test_parse_parsesImports()
+      
+    } catch {
+      print(error)
+    }
   }
   
-  func test_parse_parsesImportBlocks() {
-    _assert(false, "should be true")
+  func test_parse_parsesImports() throws {
+    let string = """
+    @import(myComponent)
+    
+    hello world
+    """
+    let sut = Parser()
+    let result = sut.parseImports(string)
+    _assert(result == ["myComponent"])
   }
 }
 
