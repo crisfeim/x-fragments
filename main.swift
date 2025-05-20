@@ -1,5 +1,3 @@
-// === main.swift (compilador + servidor Vapor con style merge) ===
-
 import Foundation
 
 class ComponentCompiler {
@@ -91,3 +89,12 @@ let _ = try! ComponentCompiler(
   sourcePath: "\(cwd)/input",
   outputPath: "\(cwd)/output"
 ).compileToFile()
+
+Server(port: 4000, requestHandler: { request in
+  if request.path == "" {
+    return Response(statusCode: 200, contentType: "text/html", body: .text("hello world"))
+  } else {
+    return Response(statusCode: 400, contentType: "text/html", body: .text("Not fund"))
+  }
+
+}).run()
